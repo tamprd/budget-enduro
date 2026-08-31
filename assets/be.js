@@ -52,27 +52,39 @@ function minLapText(v){ return v.min_lap ? v.min_lap + ' sec' : 'To be advised';
    inherits the surrounding colour — one file works white on dark and black on light. */
 function mapEl(v){
   if (!v.map) return '<span class="ph">Map<br>coming soon</span>';
-  return '<span class="ph" data-map="' + v.map + '">' + v.short + '<br>map loading</span>';
+  return '<span class="map-slot ph" data-map="' + v.map + '">' + v.short + '<br>map loading</span>';
 }
 
 function hydrateMaps(root){
   root.querySelectorAll('[data-map]').forEach(function(slot){
     fetch(slot.dataset.map)
       .then(function(r){ if (!r.ok) throw new Error(r.status); return r.text(); })
-      .then(function(svg){ slot.outerHTML = svg; })
+      .then(function(svg){
+        slot.innerHTML = svg;
+        slot.classList.remove('ph');
+      })
       .catch(function(){
+        slot.classList.add('ph');
         slot.textContent = 'Map coming soon';
       });
   });
 }
 
-function fmtDate(d){ return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); }
+function localDate(ev){
+  var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(ev.date);
+  return { y: +m[1], m: +m[2] - 1, d: +m[3] };
+}
+
+function fmtDate(ev){
+  var p = localDate(ev);
+  return p.d + ' ' + MONTHS[p.m] + ' ' + p.y;
+}
 
 /* ---- event card markup ---- */
 function eventCard(ev){
-  var d = new Date(ev.date);
+  var p = localDate(ev);
   var open = ev.status === 'open';
-  var when = fmtDate(d);
+  var when = fmtDate(ev);
 
   var v = venueOf(ev);
   var venueName = v.short || v.name || '';
@@ -85,24 +97,27 @@ function eventCard(ev){
       ', ' + ev.price + ' per team</span></a>';
   }
 
-  return '<article class="ev ev-fallback">' + TRACK_SVG +
-      '<div class="ev-body">' +
-        '<div class="ev-date">' +
-          '<span class="d">' + String(d.getDate()).padStart(2,'0') + '</span>' +
-          '<span class="m">' + MONTHS[d.getMonth()] + '</span>' +
-          '<span class="y">' + d.getFullYear() + '</span>' +
-        '</div>' +
-        '<div class="ev-meta">' +
-          '<h3>' + venueName + '</h3>' +
-          '<div class="ev-name">' + ev.name + '</div>' +
-          '<div class="ev-status' + (open ? '' : ' closed') + '">' +
-            '<span class="dot"></span>' + (open ? 'Entries open' : 'Entries closed') + '</div>' +
-          '<div class="ev-price"><b>' + ev.price + '</b> per team</div>' +
-        '</div>' +
+  // No artwork for this round yet, so build a card in the same idiom as the posters.
+  var mapSlot = v.map ? '<span class="ev-fb-map" data-map="' + v.map + '"></span>' : '';
+
+  return '<article class="ev-fallback">' +
+      mapSlot +
+      '<div class="ev-fb-date">' +
+        '<span class="d">' + String(p.d).padStart(2, '0') + '</span>' +
+        '<span class="m">' + MONTHS[p.m].toUpperCase() + '</span>' +
+        '<span class="y">' + p.y + '</span>' +
       '</div>' +
-      '<div class="ev-actions">' +
-        '<a class="btn btn-ghost btn-sm" href="rules">Event info</a>' +
-        '<a class="btn btn-primary btn-sm" href="enter#' + ev.uuid + '">Enter now ' + ARROW + '</a>' +
+      '<div class="ev-fb-rule"></div>' +
+      '<div class="ev-fb-main">' +
+        '<p class="ev-fb-venue">' + venueName + '</p>' +
+        '<p class="ev-fb-name">' + ev.name + '</p>' +
+        '<span class="ev-fb-status' + (open ? '' : ' closed') + '">' +
+          (open ? 'Entries open' : 'Entries closed') + '</span>' +
+        '<p class="ev-fb-price"><b>' + ev.price + '</b> per team</p>' +
+        '<div class="ev-fb-actions">' +
+          '<a class="ev-fb-btn ghost" href="rules">Event info ' + ARROW + '</a>' +
+          '<a class="ev-fb-btn go" href="enter#' + ev.uuid + '">Enter now ' + ARROW + '</a>' +
+        '</div>' +
       '</div>' +
     '</article>';
 }
@@ -129,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var limit = parseInt(grid.dataset.events, 10);
     var list = isNaN(limit) ? EVENTS : EVENTS.slice(0, limit);
     grid.innerHTML = list.map(eventCard).join('');
+    hydrateMaps(grid);
   });
 
   /* ---- venue cards ---- */
@@ -185,9 +201,9 @@ document.addEventListener('DOMContentLoaded', function(){
     var heading  = document.getElementById('entryHeading');
 
     picker.innerHTML = EVENTS.map(function(ev, i){
-      var d = new Date(ev.date);
+      var p = localDate(ev);
       return '<button role="tab" aria-selected="' + (i === 0) + '" data-uuid="' + ev.uuid + '">' +
-        d.getDate() + ' ' + MONTHS[d.getMonth()] + ' · ' + (venueOf(ev).short || '') + '</button>';
+        p.d + ' ' + MONTHS[p.m] + ' · ' + (venueOf(ev).short || '') + '</button>';
     }).join('');
 
     function loadEvent(uuid){
@@ -199,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function(){
       if (heading){
         var v = venueOf(ev);
         heading.textContent = ev.name + ' — ' + (v.short || '') + ', ' +
-          fmtDate(new Date(ev.date)) + ' · ' + ev.price + ' per team';
+          fmtDate(ev) + ' · ' + ev.price + ' per team';
       }
       Array.prototype.forEach.call(picker.children, function(b){
         b.setAttribute('aria-selected', String(b.dataset.uuid === ev.uuid));
