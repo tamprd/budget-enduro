@@ -68,6 +68,39 @@ try {
     .catch(function(){});
 } catch (e) {}
 
+/* ---- Live venues for this club from the ArgusIQ club API, with venues.js as
+   the seed. Same stale-while-revalidate approach as the events above: rebuild
+   the VENUES list and VENUE lookup from cache now, refresh in the background. ---- */
+(function () {
+  var BE_VENUES_KEY = 'be_venues_v1';
+  function beVenuesCached() {
+    try { var s = localStorage.getItem(BE_VENUES_KEY); var d = s ? JSON.parse(s) : null;
+      return (d && d.length) ? d : null; } catch (e) { return null; }
+  }
+  function beVenuesNormalize(list) {
+    return list.map(function (v) {
+      return {
+        slug: v.slug, name: v.name, short: v.short, state: v.state, address: v.address,
+        lat: v.lat, lng: v.lng, min_lap: v.min_lap_seconds, length_km: v.length_km,
+        turns: v.turns, direction: v.direction, pit_speed: v.pit_speed, map: v.map_svg_path
+      };
+    });
+  }
+  var _liveVenues = beVenuesCached();
+  if (_liveVenues && typeof VENUES !== 'undefined' && typeof VENUE !== 'undefined') {
+    VENUES.length = 0;
+    Array.prototype.push.apply(VENUES, beVenuesNormalize(_liveVenues));
+    for (var k in VENUE) { if (Object.prototype.hasOwnProperty.call(VENUE, k)) delete VENUE[k]; }
+    VENUES.forEach(function (v) { VENUE[v.slug] = v; });
+  }
+  try {
+    fetch(ARGUS_ORIGIN + '/api/public/clubs/budget-enduro/venues')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && d.venues && d.venues.length) { try { localStorage.setItem(BE_VENUES_KEY, JSON.stringify(d.venues)); } catch (e) {} } })
+      .catch(function () {});
+  } catch (e) {}
+})();
+
 var EVENTS = LIVE_EVENTS
   .filter(function(e){ return e.type === 'enduro'; })
   .sort(function(a,b){ return new Date(a.date) - new Date(b.date); });
