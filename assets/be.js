@@ -32,7 +32,43 @@ var ALL_EVENTS = [
     name:'Tampered Motorsport Track Day', price:'$275.70', status:'open' }
 ];
 
-var EVENTS = ALL_EVENTS
+/* ---- Live events from the ArgusIQ club API, with the array above as a
+   fallback seed. Stale-while-revalidate: render from cache (or seed) now,
+   refresh the cache in the background for the next page load. ---- */
+var BE_CACHE_KEY = 'be_events_v1';
+function beCached(){
+  try { var s = localStorage.getItem(BE_CACHE_KEY); var d = s ? JSON.parse(s) : null;
+    return (d && d.length) ? d : null; } catch (e) { return null; }
+}
+function bePoster(uuid){
+  for (var i = 0; i < ALL_EVENTS.length; i++){ if (ALL_EVENTS[i].uuid === uuid) return ALL_EVENTS[i].poster; }
+  return '/assets/hero.jpg';
+}
+function beNormalize(list){
+  return list.map(function(e){
+    return {
+      uuid: e.uuid,
+      type: (e.type === 'track_day') ? 'trackday' : e.type,
+      date: e.date,
+      venueSlug: e.venue_slug,
+      name: e.name,
+      price: e.price_display,
+      status: e.status,
+      poster: bePoster(e.uuid),
+      entry_url: e.entry_url
+    };
+  });
+}
+var _beLive = beCached();
+var LIVE_EVENTS = _beLive ? beNormalize(_beLive) : ALL_EVENTS;
+try {
+  fetch(ARGUS_ORIGIN + '/api/public/clubs/budget-enduro/events?status=open')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){ if (d && d.events && d.events.length){ try { localStorage.setItem(BE_CACHE_KEY, JSON.stringify(d.events)); } catch (e) {} } })
+    .catch(function(){});
+} catch (e) {}
+
+var EVENTS = LIVE_EVENTS
   .filter(function(e){ return e.type === 'enduro'; })
   .sort(function(a,b){ return new Date(a.date) - new Date(b.date); });
 
