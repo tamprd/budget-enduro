@@ -55,21 +55,11 @@ VENUES = [
          lat=-37.9469, lng=145.1653,
          min_lap=95, length_km=3.10, turns=13, direction='Clockwise',
          pit_speed=60, map='/assets/tracks/sandown.svg'),
-    dict(slug='broadford', name='Broadford Motorsport Complex', short='Broadford', state='VIC',
-         address='Strath Creek Rd, Broadford, Victoria',
-         lat=-37.1897, lng=145.0664,
-         min_lap=73, length_km=2.24, turns=12, direction='Clockwise',
-         pit_speed=40, map='/assets/tracks/broadford.svg'),
     dict(slug='mallala', name='Mallala Motorsport Park', short='Mallala', state='SA',
          address='Aerodrome Rd, Mallala, South Australia',
          lat=-34.4361, lng=138.5122,
          min_lap=87, length_km=2.56, turns=10, direction='Clockwise',
          pit_speed=40, map='/assets/tracks/mallala.svg'),
-    dict(slug='carnell', name='Carnell Raceway', short='Carnell', state='QLD',
-         address='Warwick, Queensland',
-         lat=-28.2094, lng=152.0311,
-         min_lap=38, length_km=1.00, turns=7, direction='Clockwise',
-         pit_speed=40, map='/assets/tracks/carnell.svg'),
 ]
 
 VENUE = {v['slug']: v for v in VENUES}
