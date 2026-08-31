@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Events &mdash; Budget Enduro</title>
+<meta name="description" content="Upcoming Budget Enduro rounds. Dates, venues, entry fees and entries.">
+<meta name="theme-color" content="#080A0B">
+<meta property="og:title" content="Events &mdash; Budget Enduro">
+<meta property="og:description" content="Upcoming Budget Enduro rounds. Dates, venues, entry fees and entries.">
+<meta property="og:image" content="/assets/og.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="/assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/be.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Budget Enduro home">
+      <img src="/assets/be-logo.png" alt="Budget Enduro" width="900" height="286">
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">Menu</button>
+    <nav class="site-nav" id="siteNav" aria-label="Main">
+      <a href="/">Home</a>
+      <a href="events" class="is-active">Events</a>
+      <a href="how-it-works">How it works</a>
+      <a href="rules">Rules</a>
+      <a href="results">Results</a>
+      <a href="gallery">Gallery</a>
+      <a href="faq">FAQ</a>
+      <a href="contact">Contact</a>
+      <a class="btn btn-primary btn-sm" href="enter">Enter an event <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+    </nav>
+  </div>
+</header>
+<div class="page-head">
+  <div class="container">
+    <p class="crumb">Calendar</p>
+    <h1>Next on the grid</h1>
+    <p>Every remaining Budget Enduro round. Entries run through ArgusIQ &mdash; pick a round, add your team and pay by card.</p>
+  </div>
+</div>
+<section class="section section-light">
+  <div class="container">
+    <div class="grid-events" data-events="all"></div>
+
+    <div class="past-note">
+      <h2>Where we race</h2>
+      <div class="red-rule"></div>
+      <div class="venue-grid" id="venueGrid"></div>
+      <div class="scroller"><table>
+        <thead><tr><th>Circuit</th><th>State</th><th>Length</th><th>Turns</th><th>Minimum lap</th></tr></thead>
+        <tbody>
+          <tr><td>Calder Park Raceway</td><td>VIC</td><td>2.30 km</td><td>10</td><td>74 sec</td></tr>
+          <tr><td>Sandown Raceway</td><td>VIC</td><td>3.10 km</td><td>13</td><td>95 sec</td></tr>
+          <tr><td>Broadford Motorsport Complex</td><td>VIC</td><td>2.24 km</td><td>12</td><td>73 sec</td></tr>
+          <tr><td>Mallala Motorsport Park</td><td>SA</td><td>2.56 km</td><td>10</td><td>To be advised</td></tr>
+          <tr><td>Carnell Raceway</td><td>QLD</td><td>1.00 km</td><td>7</td><td>38 sec</td></tr>
+        </tbody>
+      </table></div>
+      <p class="muted" style="margin-top:18px">Past results for every round are in the
+        <a href="results">Hall of Fame</a>.</p>
+    </div>
+  </div>
+</section>
+<section class="cta-band">
+  <div class="container cta-band-inner">
+    <h2>Grab your mates. Find a car. Go racing.</h2>
+    <a class="btn" href="enter">Enter an event <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+  </div>
+</section>
+<div class="chequer" aria-hidden="true"></div>
+<footer class="site-footer">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <img class="flogo" src="/assets/be-logo.png" alt="Budget Enduro" width="900" height="286">
+        <p class="foot-tag">Real cars. Real people. Real racing.</p>
+        <div class="socials">
+          <a href="#" aria-label="Budget Enduro on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6c-.29-.04-1.27-.12-2.4-.12-2.38 0-4 1.45-4 4.11V9.9H7.6V13h2.7v8h3.2z"/></svg></a>
+          <a href="#" aria-label="Budget Enduro on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="Budget Enduro on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12s0-3.2-.4-4.7a2.5 2.5 0 00-1.7-1.8C18.3 5 12 5 12 5s-6.3 0-7.9.5A2.5 2.5 0 002.4 7.3C2 8.8 2 12 2 12s0 3.2.4 4.7c.2.9.9 1.6 1.7 1.8 1.6.5 7.9.5 7.9.5s6.3 0 7.9-.5a2.5 2.5 0 001.7-1.8c.4-1.5.4-4.7.4-4.7zM10 15.2V8.8l5.2 3.2-5.2 3.2z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Quick links</h4>
+        <ul>
+          <li><a href="how-it-works">How it works</a></li>
+          <li><a href="events">Events</a></li>
+          <li><a href="rules">Rules</a></li>
+          <li><a href="results">Results</a></li>
+          <li><a href="faq">FAQ</a></li>
+          <li><a href="https://timing.argusiq.io">Live timing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Circuits</h4>
+        <ul>
+          <li>Calder Park, VIC</li>
+          <li>Sandown Raceway, VIC</li>
+          <li>Broadford, VIC</li>
+          <li>Mallala Motorsport Park, SA</li>
+          <li>Carnell Raceway, QLD</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact us</h4>
+        <ul>
+          <li><a href="mailto:race@budgetenduro.com.au">race@budgetenduro.com.au</a></li>
+          <li><a href="tel:+61357626000">03 5762 6000</a></li>
+        </ul>
+        <a class="btn btn-primary btn-sm" style="margin-top:16px" href="enter">Enter an event <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+    <div class="colophon">
+      <span>&copy; 2026 Budget Enduro &middot; Tampered Motorsport. All rights reserved.</span>
+      <span>Entries, payments and timing by <a href="https://www.argusiq.io">ArgusIQ</a></span>
+    </div>
+  </div>
+</footer>
+
+<div class="sticky-cta">
+  <a class="btn btn-primary" href="enter">Enter an event <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+</div>
+
+<script src="/assets/venues.js"></script>
+<script src="/assets/be.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=(), payment=(self \"https://www.argusiq.io\")" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=604800, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/assets/(.*).(jpg|png|svg)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ],
+  "redirects": [
+    { "source": "/the-rules", "destination": "/rules", "permanent": true },
+    { "source": "/budget-enduro-quick-eligibility-guide", "destination": "/how-it-works", "permanent": true },
+    { "source": "/sandown-hall-of-fame", "destination": "/results", "permanent": true },
+    { "source": "/shop", "destination": "/", "permanent": true },
+    { "source": "/cart", "destination": "/", "permanent": true },
+    { "source": "/checkout", "destination": "/enter", "permanent": true },
+    { "source": "/events/list", "destination": "/events", "permanent": true },
+    { "source": "/event/:slug", "destination": "/events", "permanent": true }
+  ]
+}
