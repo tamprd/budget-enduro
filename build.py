@@ -63,7 +63,7 @@ VENUES = [
     dict(slug='mallala', name='Mallala Motorsport Park', short='Mallala', state='SA',
          address='Aerodrome Rd, Mallala, South Australia',
          lat=-34.4361, lng=138.5122,
-         min_lap=None, length_km=2.56, turns=10, direction='Clockwise',
+         min_lap=87, length_km=2.56, turns=10, direction='Clockwise',
          pit_speed=40, map='/assets/tracks/mallala.svg'),
     dict(slug='carnell', name='Carnell Raceway', short='Carnell', state='QLD',
          address='Warwick, Queensland',
