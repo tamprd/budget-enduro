@@ -5,9 +5,25 @@ Budget Enduro site builder.
 Header, footer and nav live here once. Run `python3 build.py` and every
 page in site/ is regenerated. Edit this file, not the HTML.
 """
-import os, re
+import os, re, hashlib
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site')
+
+
+def _asset_ver():
+    """Content hash of the client JS, so a deploy busts the browser cache."""
+    h = hashlib.md5()
+    base = os.path.dirname(os.path.abspath(__file__))
+    for fn in ('assets/be.js', 'assets/venues.js'):
+        try:
+            with open(os.path.join(base, fn), 'rb') as f:
+                h.update(f.read())
+        except OSError:
+            pass
+    return h.hexdigest()[:8]
+
+
+ASSET_VER = _asset_ver()
 
 NAV = [
     ('index.html',        'Home'),
@@ -222,8 +238,8 @@ FOOTER = f'''<div class="chequer" aria-hidden="true"></div>
   <a class="btn btn-primary" href="enter">Enter an event {ARROW}</a>
 </div>
 
-<script src="/assets/venues.js"></script>
-<script src="/assets/be.js"></script>
+<script src="/assets/venues.js?v={ASSET_VER}"></script>
+<script src="/assets/be.js?v={ASSET_VER}"></script>
 </body>
 </html>
 '''
