@@ -209,6 +209,8 @@ p{margin:0 0 1em}
 .ev-fb-btn.ghost:hover{background:var(--be-silver)}
 .ev-fb-btn.go{background:var(--be-red);color:#fff}
 .ev-fb-btn.go:hover{background:var(--be-red-dark)}
+.ev-fb-status.soon{background:var(--be-red);color:#fff}
+.ev-fb-btn.soon{background:var(--be-gunmetal);color:var(--be-silver);cursor:default}
 
 .ev-fb-map{position:absolute;right:3cqw;bottom:9cqw;width:36cqw;height:30cqw;z-index:1;
   color:#fff;opacity:.42;pointer-events:none}
