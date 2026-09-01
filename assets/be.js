@@ -54,6 +54,7 @@ function beNormalize(list){
       name: e.name,
       price: e.price_display,
       status: e.status,
+        entries_open_at: e.entries_open_at,
       poster: bePoster(e.uuid),
       entry_url: e.entry_url
     };
@@ -62,7 +63,7 @@ function beNormalize(list){
 var _beLive = beCached();
 var LIVE_EVENTS = _beLive ? beNormalize(_beLive) : ALL_EVENTS;
 try {
-  fetch(ARGUS_ORIGIN + '/api/public/clubs/budget-enduro/events?status=open')
+  fetch(ARGUS_ORIGIN + '/api/public/clubs/budget-enduro/events?upcoming=1')
     .then(function(r){ return r.ok ? r.json() : null; })
     .then(function(d){ if (d && d.events && d.events.length){ try { localStorage.setItem(BE_CACHE_KEY, JSON.stringify(d.events)); } catch (e) {} } })
     .catch(function(){});
@@ -145,7 +146,13 @@ function localDate(ev){
   return { y: +m[1], m: +m[2] - 1, d: +m[3] };
 }
 
-function fmtDate(ev){
+function fmtOpenDate(iso){
+    var dt = new Date(iso);
+    if (isNaN(dt.getTime())) return '';
+    return dt.getDate() + ' ' + MONTHS[dt.getMonth()];
+  }
+
+  function fmtDate(ev){
   var p = localDate(ev);
   return p.d + ' ' + MONTHS[p.m] + ' ' + p.y;
 }
@@ -154,6 +161,8 @@ function fmtDate(ev){
 function eventCard(ev){
   var p = localDate(ev);
   var open = ev.status === 'open';
+  var scheduled = ev.status === 'scheduled';
+  var opensWhen = (scheduled && ev.entries_open_at) ? fmtOpenDate(ev.entries_open_at) : '';
   var when = fmtDate(ev);
 
   var v = venueOf(ev);
@@ -181,12 +190,12 @@ function eventCard(ev){
       '<div class="ev-fb-main">' +
         '<p class="ev-fb-venue">' + venueName + '</p>' +
         '<p class="ev-fb-name">' + ev.name + '</p>' +
-        '<span class="ev-fb-status' + (open ? '' : ' closed') + '">' +
-          (open ? 'Entries open' : 'Entries closed') + '</span>' +
+        '<span class="ev-fb-status' + (open ? '' : scheduled ? ' soon' : ' closed') + '">' +
+          (open ? 'Entries open' : scheduled ? ('Entries open ' + opensWhen) : 'Entries closed') + '</span>' +
         '<p class="ev-fb-price"><b>' + ev.price + '</b> per team</p>' +
         '<div class="ev-fb-actions">' +
           '<a class="ev-fb-btn ghost" href="rules">Event info ' + ARROW + '</a>' +
-          '<a class="ev-fb-btn go" href="enter#' + ev.uuid + '">Enter now ' + ARROW + '</a>' +
+          (open ? ('<a class="ev-fb-btn go" href="enter#' + ev.uuid + '">Enter now ' + ARROW + '</a>') : scheduled ? ('<span class="ev-fb-btn soon">Entries open ' + opensWhen + '</span>') : '') +
         '</div>' +
       '</div>' +
     '</article>';
