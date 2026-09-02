@@ -157,14 +157,22 @@ def wrap(text, size, max_w, min_size=40):
 def track_layer(svg_path, box_w, box_h, opacity=110):
     if not svg_path:
         return None
-    p = os.path.join(HERE, svg_path.lstrip('/'))
-    if not os.path.exists(p):
-        return None
     try:
         import cairosvg
     except ImportError:
         return None
-    svg = open(p, encoding='utf-8').read().replace('currentColor', '#ffffff')
+    if svg_path.startswith('http://') or svg_path.startswith('https://'):
+        import urllib.request
+        try:
+            svg = urllib.request.urlopen(svg_path, timeout=15).read().decode('utf-8')
+        except Exception:
+            return None
+    else:
+        p = os.path.join(HERE, svg_path.lstrip('/'))
+        if not os.path.exists(p):
+            return None
+        svg = open(p, encoding='utf-8').read()
+    svg = svg.replace('currentColor', '#ffffff')
     png = cairosvg.svg2png(bytestring=svg.encode(), output_width=box_w * 2)
     im = Image.open(io.BytesIO(png)).convert('RGBA')
     im.thumbnail((box_w, box_h), Image.LANCZOS)
