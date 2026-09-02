@@ -49,7 +49,7 @@ VENUES = [
          address='377 Calder Fwy, Calder Park, Victoria',
          lat=-37.6497, lng=144.7594,
          min_lap=74, length_km=2.30, turns=10, direction='Clockwise',
-         pit_speed=60, map='/assets/tracks/calder-park.svg'),
+         pit_speed=60, map='https://www.argusiq.io/tracks/calder-park.svg'),
     dict(slug='sandown', name='Sandown Raceway', short='Sandown', state='VIC',
          address='591-659 Princes Hwy, Springvale, Victoria',
          lat=-37.9469, lng=145.1653,
@@ -59,7 +59,7 @@ VENUES = [
          address='Aerodrome Rd, Mallala, South Australia',
          lat=-34.4361, lng=138.5122,
          min_lap=87, length_km=2.56, turns=10, direction='Clockwise',
-         pit_speed=40, map='/assets/tracks/mallala.svg'),
+         pit_speed=40, map='https://www.argusiq.io/tracks/mallala.svg'),
 ]
 
 VENUE = {v['slug']: v for v in VENUES}
