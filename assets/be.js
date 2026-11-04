@@ -255,18 +255,96 @@ document.addEventListener('DOMContentLoaded', function(){
     hydrateMaps(vg);
   }
 
-  /* ---- results tabs ---- */
-  var vbtns = document.querySelectorAll('.venues button');
-  vbtns.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      vbtns.forEach(function(b){
-        b.setAttribute('aria-selected','false');
-        document.getElementById('pane-' + b.dataset.pane).hidden = true;
+  /* ---- results / Hall of Fame (live, stale-while-revalidate) ----
+     The page ships with a static seed (the markup inside #hofRoot) so it
+     works with no JS and offline. When JS runs we render from the cached
+     API payload immediately, then refresh from ArgusIQ in the background
+     so new rounds added in the admin show up without a site rebuild. ---- */
+  var BE_RESULTS_KEY = 'be_results_v1';
+  var HOF_MONTHS = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+  function beResultsCached(){
+    try { var s = localStorage.getItem(BE_RESULTS_KEY); var d = s ? JSON.parse(s) : null;
+      return (d && d.length) ? d : null; } catch(e){ return null; }
+  }
+  function hofSlug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+  function hofPad(n){ return (n<10?'0':'')+n; }
+  function hofEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function hofDateParts(iso){ var p = String(iso).slice(0,10).split('-'); return (p.length===3) ? p : null; }
+  function hofDateCell(iso){ var p = hofDateParts(iso); return p ? (hofPad(+p[2])+'/'+hofPad(+p[1])+'/'+p[0]) : iso; }
+  function hofDateLong(iso){ var p = hofDateParts(iso); return p ? ((+p[2])+' '+HOF_MONTHS[(+p[1])-1]+' '+p[0]) : iso; }
+
+  function bindResultTabs(){
+    var vbtns = document.querySelectorAll('#hofRoot .venues button');
+    vbtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        vbtns.forEach(function(b){
+          b.setAttribute('aria-selected','false');
+          var hp = document.getElementById('pane-' + b.dataset.pane); if (hp) hp.hidden = true;
+        });
+        btn.setAttribute('aria-selected','true');
+        var sp = document.getElementById('pane-' + btn.dataset.pane); if (sp) sp.hidden = false;
       });
-      btn.setAttribute('aria-selected','true');
-      document.getElementById('pane-' + btn.dataset.pane).hidden = false;
     });
-  });
+  }
+
+  function renderHallOfFame(results){
+    var root = document.getElementById('hofRoot');
+    if (!root || !results || !results.length) return;
+    /* group by circuit; API is ordered date desc so rows stay newest-first */
+    var order = [], groups = {};
+    results.forEach(function(r){
+      var c = r.circuit || 'Other';
+      if (!groups[c]){ groups[c] = []; order.push(c); }
+      groups[c].push(r);
+    });
+    /* most-recently-raced circuit first (matches the admin ordering) */
+    order.sort(function(a,b){
+      var da = groups[a][0] ? String(groups[a][0].date) : '';
+      var db = groups[b][0] ? String(groups[b][0].date) : '';
+      return db < da ? -1 : db > da ? 1 : 0;
+    });
+    var tabs = '<div class="venues" role="tablist" aria-label="Choose a circuit">';
+    var panes = '';
+    order.forEach(function(c, i){
+      var slug = hofSlug(c);
+      tabs += '<button role="tab" aria-selected="' + (i===0?'true':'false') +
+              '" data-pane="' + slug + '">' + hofEsc(c) + '</button>';
+      var rec = null;
+      groups[c].forEach(function(r){ if (r.laps != null && (!rec || r.laps > rec.laps)) rec = r; });
+      var recHtml = rec
+        ? '<div class="record"><b>' + rec.laps + ' laps</b><span>' + hofEsc(rec.first) +
+          ' &middot; ' + hofEsc(c) + ' &middot; ' + hofDateLong(rec.date) + '</span></div>'
+        : '';
+      var body = groups[c].map(function(r){
+        return '<tr><td>' + hofDateCell(r.date) + '</td><td>' + hofEsc(r.first) +
+               '</td><td>' + hofEsc(r.second) + '</td><td>' + hofEsc(r.third) + '</td></tr>';
+      }).join('');
+      panes += '<div class="pane" id="pane-' + slug + '"' + (i===0?'':' hidden') + '>' + recHtml +
+        '<div class="scroller"><table><thead><tr><th>Date</th><th>Most laps</th>' +
+        '<th>Second</th><th>Third</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
+    });
+    tabs += '</div>';
+    root.innerHTML = tabs + panes;
+    bindResultTabs();
+  }
+
+  if (document.getElementById('hofRoot')){
+    var _hofCache = beResultsCached();
+    if (_hofCache) renderHallOfFame(_hofCache);
+    else bindResultTabs(); /* wire up the static seed markup */
+    try {
+      fetch(ARGUS_ORIGIN + '/api/public/clubs/budget-enduro/results')
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(d){
+          if (d && d.results && d.results.length){
+            try { localStorage.setItem(BE_RESULTS_KEY, JSON.stringify(d.results)); } catch(e){}
+            renderHallOfFame(d.results);
+          }
+        })
+        .catch(function(){});
+    } catch(e){}
+  }
 
   /* ---- gallery placeholders ---- */
   var gal = document.getElementById('galleryGrid');
