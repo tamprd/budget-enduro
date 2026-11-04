@@ -851,6 +851,7 @@ RULES_BODY = '''<section class="section section-light">
 
 RESULTS_BODY = '''<section class="section section-dark">
   <div class="container">
+   <div id="hofRoot">
     <div class="venues" role="tablist" aria-label="Choose a circuit">
       <button role="tab" aria-selected="true"  data-pane="sandown">Sandown</button>
       <button role="tab" aria-selected="false" data-pane="calder">Calder Park</button>
@@ -922,6 +923,7 @@ RESULTS_BODY = '''<section class="section section-dark">
         </tbody>
       </table></div>
     </div>
+   </div>
 
     <p class="muted" style="margin-top:30px">Live timing on race day runs at
       <a href="https://timing.argusiq.io" style="color:#fff">timing.argusiq.io</a>.</p>
