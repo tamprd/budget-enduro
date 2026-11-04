@@ -191,6 +191,7 @@ p{margin:0 0 1em}
   display:flex;flex-direction:column}
 .ev-fb-venue{font-family:var(--font-display);font-style:italic;font-weight:800;
   text-transform:uppercase;font-size:8.4cqw;line-height:.95;margin:0}
+.ev-fb-state{font-size:.52em;color:var(--be-silver);white-space:nowrap}
 .ev-fb-name{font-family:var(--font-display);font-style:italic;font-weight:800;
   text-transform:uppercase;font-size:6.4cqw;line-height:1;color:var(--be-red);margin:.28em 0 0}
 .ev-fb-status{display:inline-block;align-self:flex-start;background:#fff;color:var(--be-black);

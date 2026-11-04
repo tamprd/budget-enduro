@@ -12,16 +12,13 @@ var ARGUS_ORIGIN = 'https://www.argusiq.io'; // -> https://enter.budgetenduro.co
 var ALL_EVENTS = [
   { uuid:'f7473fb2-80a2-4a79-8d70-fbb3c2abf7ee', type:'enduro',
     date:'2026-09-13T09:00:00+10:00', venueSlug:'calder-park',
-    name:'Raceworks Budget Enduro', price:'$1,021', status:'open',
-    poster:'/assets/event-sep13.jpg' },
+    name:'Raceworks Budget Enduro', price:'$1,021', status:'open' },
   { uuid:'590b3526-79c1-446f-ac7f-5ffa0b828522', type:'enduro',
     date:'2026-11-08T09:00:00+11:00', venueSlug:'calder-park',
-    name:'Raceworks Budget Enduro', price:'$1,021', status:'open',
-    poster:'/assets/event-nov08.jpg' },
+    name:'Raceworks Budget Enduro', price:'$1,021', status:'open' },
   { uuid:'e6fd8775-ef34-4bdb-9cb6-6ec61cd6e209', type:'enduro',
     date:'2026-12-12T09:00:00+10:30', venueSlug:'mallala',
-    name:'State of Origin 1', price:'$1,021', status:'open',
-    poster:'/assets/event-dec12.jpg' },
+    name:'State of Origin 1', price:'$1,021', status:'open' },
 
   /* Track Days live in ArgusIQ too. They never render here. */
   { uuid:'8574ed4d-4cc9-4069-8a6e-b0088698d045', type:'trackday',
@@ -42,7 +39,7 @@ function beCached(){
 }
 function bePoster(uuid){
   for (var i = 0; i < ALL_EVENTS.length; i++){ if (ALL_EVENTS[i].uuid === uuid) return ALL_EVENTS[i].poster; }
-  return '/assets/hero.jpg';
+  return '';
 }
 function beNormalize(list){
   return list.map(function(e){
@@ -167,6 +164,7 @@ function eventCard(ev){
 
   var v = venueOf(ev);
   var venueName = v.short || v.name || '';
+  var stateText = v.state ? ' (' + v.state + ')' : '';
 
   if (ev.poster){
     return '<a class="ev-poster" href="enter#' + ev.uuid + '">' +
@@ -188,7 +186,8 @@ function eventCard(ev){
       '</div>' +
       '<div class="ev-fb-rule"></div>' +
       '<div class="ev-fb-main">' +
-        '<p class="ev-fb-venue">' + venueName + '</p>' +
+        '<p class="ev-fb-venue">' + venueName +
+          (stateText ? '<span class="ev-fb-state">' + stateText + '</span>' : '') + '</p>' +
         '<p class="ev-fb-name">' + ev.name + '</p>' +
         '<span class="ev-fb-status' + (open ? '' : scheduled ? ' soon' : ' closed') + '">' +
           (open ? 'Entries open' : scheduled ? ('Entries open ' + opensWhen) : 'Entries closed') + '</span>' +
