@@ -123,9 +123,20 @@ function mapEl(v){
   return '<span class="map-slot ph" data-map="' + v.map + '">' + v.short + '<br>map loading</span>';
 }
 
+/* Resolve a circuit-map path before fetching. Absolute URLs and local /assets/
+   paths are used as-is; any other root-relative path (e.g. "/tracks/x.svg" as
+   returned by the ArgusIQ club API) is fetched from ArgusIQ, where the circuit
+   SVGs are served — otherwise it would 404 against this static site. */
+function mapUrl(path){
+  if (!path) return '';
+  if (/^https?:\/\//.test(path)) return path;
+  if (path.indexOf('/assets/') === 0) return path;
+  return ARGUS_ORIGIN + path;
+}
+
 function hydrateMaps(root){
   root.querySelectorAll('[data-map]').forEach(function(slot){
-    fetch(slot.dataset.map)
+    fetch(mapUrl(slot.dataset.map))
       .then(function(r){ if (!r.ok) throw new Error(r.status); return r.text(); })
       .then(function(svg){
         slot.innerHTML = svg;
